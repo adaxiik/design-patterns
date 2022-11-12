@@ -5,9 +5,9 @@ namespace ObjectRelationalBehavioral.UnitOfWork
 {
     public class UnitOfWork
     {
-        public List<Person> newRegistry = new List<Person>();
-        public List<Person> dirtyRegistry = new List<Person>();
-        public List<Person> deletedRegistry = new List<Person>();
+        private List<Person> newRegistry = new List<Person>();
+        private List<Person> dirtyRegistry = new List<Person>();
+        private List<Person> deletedRegistry = new List<Person>();
 
         private static UnitOfWork? self = null;
 

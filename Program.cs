@@ -2,15 +2,14 @@
 using Microsoft.Data.Sqlite;
 
 // Data Access
-using DataAccess;
 using DataAccess.TableDataGateway;
 using DataAccess.RowDataGateway;
 using DataAccess.ActiveRecord;
 using DataAccess.DataMapper;
 
 // Object Relational Behavioral
-using ObjectRelationalBehavioral;
 using ObjectRelationalBehavioral.UnitOfWork;
+using ObjectRelationalBehavioral.IdentityMap;
 
 
 namespace DesignPatterns
@@ -116,6 +115,16 @@ namespace DesignPatterns
                 Console.WriteLine("Database after second commit:");
                 foreach (var person in new ObjectRelationalBehavioral.DAO.PersonGateway().FindAll())
                     Console.WriteLine(person);
+            }
+            Console.WriteLine();
+            // Identity Map
+            {
+                // Debug texts are in FindById method
+                var p1 = IMPersonFinder.FindById(3); // Tomáš Vláček
+                var p2 = IMPersonFinder.FindById(1); // Eliška Silná
+                var p3 = IMPersonFinder.FindById(3); // Tomáš Vláček
+                p3!.Balance = 1_000_000;
+                p3!.Update();
             }
         }
 
