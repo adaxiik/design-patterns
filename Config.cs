@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DataAccess
+namespace DesignPatterns
 {
     public class Config
     {

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 using Microsoft.Data.Sqlite;
+using DesignPatterns;
 
 namespace DataAccess.DataMapper
 {

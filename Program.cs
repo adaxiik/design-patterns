@@ -1,10 +1,17 @@
 ﻿using System;
 using Microsoft.Data.Sqlite;
+
+// Data Access
 using DataAccess;
 using DataAccess.TableDataGateway;
 using DataAccess.RowDataGateway;
 using DataAccess.ActiveRecord;
 using DataAccess.DataMapper;
+
+// Object Relational Behavioral
+using ObjectRelationalBehavioral;
+using ObjectRelationalBehavioral.UnitOfWork;
+
 
 namespace DesignPatterns
 {
@@ -18,25 +25,24 @@ namespace DesignPatterns
                 connection.Open();
                 using (SqliteCommand command = new SqliteCommand($"DELETE FROM {table}", connection))
                     command.ExecuteNonQuery();
-                
+
                 // reset autoincrement
                 using (SqliteCommand command = new SqliteCommand($"UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='{table}'", connection))
                     command.ExecuteNonQuery();
-                
+
             }
         }
-
-        static void Main(string[] args)
+        static void DataAccessDemo()
         {
             ClearDatabase("People");
-
+            Console.WriteLine("Data Access: ");
             // Table Data Gateway
             {
-                var p0 = new Person("Silná", "Eliška", 1000);
-                var p1 = new Person("Vláček", "Tomáš", 10);
-                var p2 = new Person("Pták", "Martin", 20);
-                var p3 = new Person("Doplachtil", "Ujo", 800);
-                var p4 = new Person("Křup", "Robin", 6969);
+                var p0 = new DataAccess.Person("Silná", "Eliška", 1000);
+                var p1 = new DataAccess.Person("Vláček", "Tomáš", 10);
+                var p2 = new DataAccess.Person("Pták", "Martin", 20);
+                var p3 = new DataAccess.Person("Doplachtil", "Ujo", 800);
+                var p4 = new DataAccess.Person("Křup", "Robin", 6969);
                 PersonGateway gateway = new PersonGateway();
                 gateway.Insert(p0);
                 gateway.Insert(p1);
@@ -76,11 +82,52 @@ namespace DesignPatterns
             {
                 PersonMapper mapper = new PersonMapper();
                 mapper.Fetch();
-                Person p = mapper.FindByLastName("Doplachtil")[0];
+                DataAccess.Person p = mapper.FindByLastName("Doplachtil")[0];
                 p.FirstName = "Tonda";
                 mapper.UpdateByLastName(p);
                 mapper.Save();
             }
+        }
+
+        static void ObjectRelationalBehavioralDemo()
+        {
+            ClearDatabase("People");
+            Console.WriteLine("Object Relational Behavioral: ");
+            // Unit of Work
+            {
+                UnitOfWork uow = UnitOfWork.GetInstance();
+                var p1 = new UOWPerson(null, "Křup", "Robin", 6969);
+                var p2 = new UOWPerson(null, "Doplachtil", "Ujo", 800);
+                var p3 = new UOWPerson(null, "Vláček", "Tomáš", 10);
+                var p4 = new UOWPerson(null, "Pták", "Martin", 20);
+                var p5 = new UOWPerson(null, "Silná", "Eliška", 1000);
+                uow.Commit();
+                Console.WriteLine("Database after first commit:");
+                foreach (var person in new ObjectRelationalBehavioral.DAO.PersonGateway().FindAll())
+                    Console.WriteLine(person);
+
+
+                p1.SetFirstName("Robinette");
+                p2.SetBalance(420);
+                p4.Delete();
+                uow.Commit();
+
+                Console.WriteLine();
+                Console.WriteLine("Database after second commit:");
+                foreach (var person in new ObjectRelationalBehavioral.DAO.PersonGateway().FindAll())
+                    Console.WriteLine(person);
+            }
+        }
+
+
+        static void Main(string[] args)
+        {
+
+            
+            // DataAccessDemo();
+            ObjectRelationalBehavioralDemo();
+
+
 
         }
     }

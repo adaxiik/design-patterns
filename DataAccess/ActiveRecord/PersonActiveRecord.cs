@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Data.Sqlite;
+using DesignPatterns;
 
 namespace DataAccess.ActiveRecord
 {
