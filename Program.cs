@@ -7,10 +7,14 @@ using DataAccess.RowDataGateway;
 using DataAccess.ActiveRecord;
 using DataAccess.DataMapper;
 
-// Object Relational Behavioral
+// Object Relational Behavior
 using ObjectRelationalBehavior.UnitOfWork;
 using ObjectRelationalBehavior.IdentityMap;
 using ObjectRelationalBehavior.LazyLoad;
+
+// Object Relational Structures
+using ObjectRelationalStructures;
+using ObjectRelationalStructures.ForeignKeyMapping;
 
 
 namespace DesignPatterns
@@ -88,8 +92,7 @@ namespace DesignPatterns
                 mapper.Save();
             }
         }
-
-        static void ObjectRelationalBehavioralDemo()
+        static void ObjectRelationalBehaviorDemo()
         {
             ClearDatabase("People");
             Console.WriteLine("Object Relational Behavioral: ");
@@ -140,14 +143,47 @@ namespace DesignPatterns
 
             }
         }
+        // NOTE!
+        // Foreign key mapping obsahuje i ukázku embedded value (viz Book.cs Price) a identification field 
+        static void ObjectRelationalStructuresDemo()
+        {
+            ClearDatabase("Authors");
+            ClearDatabase("Books");
+            Console.WriteLine("Object Relational Behavioral: ");
 
+            // Foreign key mapping
+            AuthorMapper authorMapper = AuthorMapper.GetInstance();
+            authorMapper.Fetch();
+            authorMapper.Insert(new Author(null, "Jack", "Kerouac"));
+            authorMapper.Insert(new Author(null, "Arthur", "Rimbaud"));
+            authorMapper.Insert(new Author(null, "Charles", "Baudelaire"));
+            authorMapper.Insert(new Author(null, "Antoine", "de Saint-Exupéry"));
+            authorMapper.Save();
 
+            BookMapper bookMapper = BookMapper.GetInstance();
+            bookMapper.Fetch();
+            bookMapper.Insert(new Book(null, "On the road", authorMapper.FindByLastName("Kerouac")[0],new Price(100,"CZK")));
+            bookMapper.Insert(new Book(null, "Flowers of Evil", authorMapper.FindByLastName("Baudelaire")[0], new Price(200, "CZK")));
+            bookMapper.Insert(new Book(null, "The Little Prince", authorMapper.FindByLastName("de Saint-Exupéry")[0], new Price(300, "CZK")));
+            bookMapper.Save();
+
+            Console.WriteLine("Authors saved to database: ");
+            foreach (var author in authorMapper.FindAll())
+                Console.WriteLine(author);
+
+            Console.WriteLine();
+            Console.WriteLine("Books saved to database: ");
+            foreach (var book in bookMapper.FindAll())
+                Console.WriteLine(book);
+
+        }
         static void Main(string[] args)
         {
 
             
             // DataAccessDemo();
-            ObjectRelationalBehavioralDemo();
+            // ObjectRelationalBehaviorDemo();
+            ObjectRelationalStructuresDemo();
 
 
 
