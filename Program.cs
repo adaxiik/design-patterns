@@ -8,8 +8,9 @@ using DataAccess.ActiveRecord;
 using DataAccess.DataMapper;
 
 // Object Relational Behavioral
-using ObjectRelationalBehavioral.UnitOfWork;
-using ObjectRelationalBehavioral.IdentityMap;
+using ObjectRelationalBehavior.UnitOfWork;
+using ObjectRelationalBehavior.IdentityMap;
+using ObjectRelationalBehavior.LazyLoad;
 
 
 namespace DesignPatterns
@@ -102,7 +103,7 @@ namespace DesignPatterns
                 var p5 = new UOWPerson(null, "Silná", "Eliška", 1000);
                 uow.Commit();
                 Console.WriteLine("Database after first commit:");
-                foreach (var person in new ObjectRelationalBehavioral.DAO.PersonGateway().FindAll())
+                foreach (var person in new ObjectRelationalBehavior.DAO.PersonGateway().FindAll())
                     Console.WriteLine(person);
 
 
@@ -113,10 +114,11 @@ namespace DesignPatterns
 
                 Console.WriteLine();
                 Console.WriteLine("Database after second commit:");
-                foreach (var person in new ObjectRelationalBehavioral.DAO.PersonGateway().FindAll())
+                foreach (var person in new ObjectRelationalBehavior.DAO.PersonGateway().FindAll())
                     Console.WriteLine(person);
             }
             Console.WriteLine();
+
             // Identity Map
             {
                 // Debug texts are in FindById method
@@ -125,6 +127,17 @@ namespace DesignPatterns
                 var p3 = IMPersonFinder.FindById(3); // Tomáš Vláček
                 p3!.Balance = 1_000_000;
                 p3!.Update();
+            }
+            Console.WriteLine();
+
+            // Lazy load initialization
+            {
+                var cemetry = new LazyCemetry();
+                var person = cemetry.GetDeadPersonByID(1)!;
+                person.Balance = 0;
+                person.Update();
+                Console.WriteLine(person.GetPerson());
+
             }
         }
 

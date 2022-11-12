@@ -41,5 +41,22 @@ namespace DataAccess.RowDataGateway
             }
             return result;
         }
+
+        public static List<PersonRowGateway> FindAll()
+        {
+            List<PersonRowGateway> result = new List<PersonRowGateway>();
+            using (SqliteConnection connection = new SqliteConnection(Config.ConnectionString))
+            {
+                connection.Open();
+                using (SqliteCommand command = new SqliteCommand("SELECT id, lastName, firstName, balance FROM people", connection))
+                {
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                        while (reader.Read())
+                            result.Add(new PersonRowGateway(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetDecimal(3)));
+
+                }
+            }
+            return result;
+        }
     }
 }
