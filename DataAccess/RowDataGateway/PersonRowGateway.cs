@@ -20,7 +20,7 @@ namespace DataAccess.RowDataGateway
             using (SqliteConnection connection = new SqliteConnection(Config.ConnectionString))
             {
                 connection.Open();
-                using (SqliteCommand command = new SqliteCommand("UPDATE People SET FirstName = @firstName, lastName = @lastName, balance = @balance WHERE Id = @id", connection))
+                using (SqliteCommand command = new SqliteCommand("UPDATE People SET firstName = @firstName, lastName = @lastName, balance = @balance WHERE Id = @id", connection))
                 {
                     command.Parameters.AddWithValue("@id", Id);
                     command.Parameters.AddWithValue("@firstName", person.FirstName);

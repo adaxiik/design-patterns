@@ -16,6 +16,7 @@ using ObjectRelationalBehavior.LazyLoad;
 using ObjectRelationalStructures;
 using ObjectRelationalStructures.ForeignKeyMapping;
 using ObjectRelationalStructures.AssociationTableMapping;
+using ObjectRelationalStructures.DependentMapping;
 
 
 namespace DesignPatterns
@@ -156,9 +157,12 @@ namespace DesignPatterns
 
             Console.WriteLine("Object Relational Behavioral: ");
 
+            // Foreign key mapping
             {
-                // Foreign key mapping
-                AuthorMapper authorMapper = AuthorMapper.GetInstance();
+                // NOTE!
+                // author.Books is unused here .. 
+                // its used later with dependent mapping
+                var authorMapper = ObjectRelationalStructures.ForeignKeyMapping.AuthorMapper.GetInstance();
                 authorMapper.Fetch();
                 authorMapper.Insert(new Author(null, "Jack", "Kerouac"));
                 authorMapper.Insert(new Author(null, "Arthur", "Rimbaud"));
@@ -166,10 +170,10 @@ namespace DesignPatterns
                 authorMapper.Insert(new Author(null, "Antoine", "de Saint-Exupéry"));
                 authorMapper.Save();
 
-                authorMapper.FindID(2)!.FirstName = "AAAAA";
+                authorMapper.FindID(2)!.FirstName = "Arthurek";
                 authorMapper.Save();
 
-                BookMapper bookMapper = BookMapper.GetInstance();
+                var bookMapper = ObjectRelationalStructures.ForeignKeyMapping.BookMapper.GetInstance();
                 bookMapper.Fetch();
                 bookMapper.Insert(new Book(null, "On the road", authorMapper.FindByLastName("Kerouac")[0], new Price(100, "CZK")));
                 bookMapper.Insert(new Book(null, "Flowers of Evil", authorMapper.FindByLastName("Baudelaire")[0], new Price(200, "CZK")));
@@ -186,6 +190,7 @@ namespace DesignPatterns
                     Console.WriteLine(book);
             }
 
+            // Association table mapping
             {
                 ParentMapper parentMapper = ParentMapper.GetInstance();
                 parentMapper.Fetch();
@@ -220,6 +225,31 @@ namespace DesignPatterns
                     Console.WriteLine(parent);
 
             }
+            Console.WriteLine();
+
+            //Dependent mapping
+            {
+                var authorMapper = ObjectRelationalStructures.DependentMapping.AuthorMapper.GetInstance();
+                authorMapper.Fetch(); // authors are already in database from Foreign key mapping demo
+
+                Author exupery = authorMapper.FindByLastName("de Saint-Exupéry")[0];
+                // NOTE!
+                // book.Author is unused with dependent mapping
+                exupery.AddBook(new Book(null, "Night Flight", null, new Price(4, "EUR")));
+
+                authorMapper.Save();
+
+
+                Console.WriteLine("Authors in database: ");
+                foreach (var author in authorMapper.FindAll())
+                {
+                    Console.WriteLine(author);
+                    foreach (var book in author.Books)
+                        Console.WriteLine("\t" + book);
+                }
+
+            }
+
 
 
 

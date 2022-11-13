@@ -88,12 +88,12 @@ namespace ObjectRelationalStructures.ForeignKeyMapping
                 {
                     if (book.Id is null)
                     {
-                        AuthorMapper.GetInstance().InsertOrUpdate(book.Author);
+                        AuthorMapper.GetInstance().InsertOrUpdate(book.Author!);
 
                         using (SqliteCommand command = new SqliteCommand("INSERT INTO Books (title, author_id, price, currency) VALUES ($title, $author_id, $price, $currency)", connection))
                         {
                             command.Parameters.AddWithValue("$title", book.Title);
-                            command.Parameters.AddWithValue("$author_id", book.Author.Id);
+                            command.Parameters.AddWithValue("$author_id", book.Author!.Id);
                             command.Parameters.AddWithValue("$price", book.Price.Value);
                             command.Parameters.AddWithValue("$currency", book.Price.Currency);
                             command.ExecuteNonQuery();
@@ -102,12 +102,12 @@ namespace ObjectRelationalStructures.ForeignKeyMapping
                     }
                     else
                     {
-                        AuthorMapper.GetInstance().InsertOrUpdate(book.Author);
+                        AuthorMapper.GetInstance().InsertOrUpdate(book.Author!);
 
                         using (SqliteCommand command = new SqliteCommand("UPDATE Books SET title = $title, author_id = $author_id, price = $price, currency = $currency WHERE book_id = $book_id", connection))
                         {
                             command.Parameters.AddWithValue("$title", book.Title);
-                            command.Parameters.AddWithValue("$author_id", book.Author.Id);
+                            command.Parameters.AddWithValue("$author_id", book.Author!.Id);
                             command.Parameters.AddWithValue("$price", book.Price.Value);
                             command.Parameters.AddWithValue("$currency", book.Price.Currency);
                             command.Parameters.AddWithValue("$book_id", book.Id);

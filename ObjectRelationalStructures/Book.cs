@@ -23,10 +23,12 @@ namespace ObjectRelationalStructures
     {
         public int? Id { get; set; }
         public string Title { get; set; }
-        public Author Author { get; set; }
+        // NOTE!
+        // Author isn't used with Dependent mapping
+        public Author? Author { get; set; }
         public Price Price { get; set; }
 
-        public Book(int? id, string title, Author author, Price price)
+        public Book(int? id, string title, Author? author, Price price)
         {
             Id = id;
             Title = title;

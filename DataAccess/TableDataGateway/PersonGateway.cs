@@ -30,7 +30,7 @@ namespace DataAccess.TableDataGateway
             using (SqliteConnection connection = new SqliteConnection(Config.ConnectionString))
             {
                 connection.Open();
-                using (SqliteCommand command = new SqliteCommand("SELECT * FROM People WHERE LastName = @lastName", connection))
+                using (SqliteCommand command = new SqliteCommand("SELECT * FROM People WHERE lastName = @lastName", connection))
                 {
                     command.Parameters.AddWithValue("@lastName", lastName);
                     using (SqliteDataReader reader = command.ExecuteReader())
@@ -46,7 +46,7 @@ namespace DataAccess.TableDataGateway
             using (SqliteConnection connection = new SqliteConnection(Config.ConnectionString))
             {
                 connection.Open();
-                using (SqliteCommand command = new SqliteCommand("INSERT INTO People (LastName, FirstName, Balance) VALUES (@lastName, @firstName, @balance)", connection))
+                using (SqliteCommand command = new SqliteCommand("INSERT INTO People (lastName, firstName, balance) VALUES (@lastName, @firstName, @balance)", connection))
                 {
                     command.Parameters.AddWithValue("@lastName", person.LastName);
                     command.Parameters.AddWithValue("@firstName", person.FirstName);
@@ -61,7 +61,7 @@ namespace DataAccess.TableDataGateway
             using (SqliteConnection connection = new SqliteConnection(Config.ConnectionString))
             {
                 connection.Open();
-                using (SqliteCommand command = new SqliteCommand("UPDATE People SET LastName = @lastName, FirstName = @firstName, Balance = @balance WHERE Id = @id", connection))
+                using (SqliteCommand command = new SqliteCommand("UPDATE People SET lastName = @lastName, firstName = @firstName, balance = @balance WHERE Id = @id", connection))
                 {
                     command.Parameters.AddWithValue("@lastName", person.LastName);
                     command.Parameters.AddWithValue("@firstName", person.FirstName);
@@ -77,7 +77,7 @@ namespace DataAccess.TableDataGateway
             using (SqliteConnection connection = new SqliteConnection(Config.ConnectionString))
             {
                 connection.Open();
-                using (SqliteCommand command = new SqliteCommand("DELETE FROM People WHERE LastName = @lastName AND FirstName = @firstName AND Balance = @balance", connection))
+                using (SqliteCommand command = new SqliteCommand("DELETE FROM People WHERE lastName = @lastName AND firstName = @firstName AND balance = @balance", connection))
                 {
                     command.Parameters.AddWithValue("@lastName", person.LastName);
                     command.Parameters.AddWithValue("@firstName", person.FirstName);
