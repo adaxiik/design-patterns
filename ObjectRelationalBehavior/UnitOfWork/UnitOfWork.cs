@@ -17,6 +17,9 @@ namespace ObjectRelationalBehavior.UnitOfWork
                 self = new UnitOfWork();
             return self;
         }
+        private UnitOfWork()
+        {
+        }
 
         public void RegisterNew(Person person)
         {

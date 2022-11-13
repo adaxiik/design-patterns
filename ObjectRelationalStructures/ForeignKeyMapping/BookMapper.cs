@@ -17,6 +17,7 @@ namespace ObjectRelationalStructures.ForeignKeyMapping
                 instance = new BookMapper();
             return instance;
         }
+        private BookMapper(){}
 
         public void Fetch()
         {

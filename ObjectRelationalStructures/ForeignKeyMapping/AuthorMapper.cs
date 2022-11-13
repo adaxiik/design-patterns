@@ -20,6 +20,7 @@ namespace ObjectRelationalStructures.ForeignKeyMapping
             return instance;
             
         }
+        private AuthorMapper(){}
 
         public void Fetch()
         {
