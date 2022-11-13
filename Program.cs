@@ -17,6 +17,7 @@ using ObjectRelationalStructures;
 using ObjectRelationalStructures.ForeignKeyMapping;
 using ObjectRelationalStructures.AssociationTableMapping;
 using ObjectRelationalStructures.DependentMapping;
+using ObjectRelationalStructures.LOB;
 
 
 namespace DesignPatterns
@@ -154,6 +155,7 @@ namespace DesignPatterns
             ClearDatabase("Parents");
             ClearDatabase("Children");
             ClearDatabase("ParentChild");
+            ClearDatabase("Schools");
 
             Console.WriteLine("Object Relational Behavioral: ");
 
@@ -247,6 +249,43 @@ namespace DesignPatterns
                     foreach (var book in author.Books)
                         Console.WriteLine("\t" + book);
                 }
+            }
+            Console.WriteLine();
+
+            // LOB
+            {
+                var s1 = new Student("Tomáš", "Vláček");
+                var s2 = new Student("Eliška", "Silná");
+                var s3 = new Student("Ujo", "Doplachtil");
+                var s4 = new Student("Martin", "Košťál");
+                var s5 = new Student("Robin", "Drobil");
+                var s6 = new Student("Amálie", "Černá");
+
+                var c1 = new Class("1.A");
+                var c2 = new Class("2.B");
+                c1.Students.Add(s1);
+                c1.Students.Add(s2);
+                c1.Students.Add(s3);
+                c1.Students.Add(s4);
+
+                c2.Students.Add(s5);
+                c2.Students.Add(s6);
+
+                var school = new School(null, "VŠB-TUO");
+                school.Classes.Add(c1);
+                school.Classes.Add(c2);
+
+                Console.WriteLine("Serialized school: " + school.SerializeClasses());
+
+                var schoolMapper = SchoolMapper.GetInstance();
+
+                schoolMapper.Fetch();
+                schoolMapper.Insert(school);
+                schoolMapper.Save();
+
+                Console.WriteLine("School saved to database: ");
+                foreach (var s in schoolMapper.FindAll())
+                    Console.WriteLine(s);
 
             }
 
