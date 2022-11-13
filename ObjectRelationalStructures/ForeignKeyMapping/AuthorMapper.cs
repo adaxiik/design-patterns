@@ -93,8 +93,6 @@ namespace ObjectRelationalStructures.ForeignKeyMapping
             using (SqliteConnection connection = new SqliteConnection(Config.ConnectionString))
             {
                 connection.Open();
-                using (SqliteCommand command = new SqliteCommand("DELETE FROM Authors", connection))
-                    command.ExecuteNonQuery();
                 foreach (Author author in authors)
                 {
                     if (author.Id is null)

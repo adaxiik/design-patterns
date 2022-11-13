@@ -15,6 +15,7 @@ using ObjectRelationalBehavior.LazyLoad;
 // Object Relational Structures
 using ObjectRelationalStructures;
 using ObjectRelationalStructures.ForeignKeyMapping;
+using ObjectRelationalStructures.AssociationTableMapping;
 
 
 namespace DesignPatterns
@@ -65,7 +66,7 @@ namespace DesignPatterns
             // Row Data Gateway
             {
                 PersonRowGateway prg1 = PersonFinder.FindByLastName("Vláček")[0];
-                prg1.Balance = 420;
+                prg1.GetPerson().Balance = 420;
                 prg1.Update();
                 Console.WriteLine(prg1.GetPerson());
             }
@@ -149,38 +150,84 @@ namespace DesignPatterns
         {
             ClearDatabase("Authors");
             ClearDatabase("Books");
+            ClearDatabase("Parents");
+            ClearDatabase("Children");
+            ClearDatabase("ParentChild");
+
             Console.WriteLine("Object Relational Behavioral: ");
 
-            // Foreign key mapping
-            AuthorMapper authorMapper = AuthorMapper.GetInstance();
-            authorMapper.Fetch();
-            authorMapper.Insert(new Author(null, "Jack", "Kerouac"));
-            authorMapper.Insert(new Author(null, "Arthur", "Rimbaud"));
-            authorMapper.Insert(new Author(null, "Charles", "Baudelaire"));
-            authorMapper.Insert(new Author(null, "Antoine", "de Saint-Exupéry"));
-            authorMapper.Save();
+            {
+                // Foreign key mapping
+                AuthorMapper authorMapper = AuthorMapper.GetInstance();
+                authorMapper.Fetch();
+                authorMapper.Insert(new Author(null, "Jack", "Kerouac"));
+                authorMapper.Insert(new Author(null, "Arthur", "Rimbaud"));
+                authorMapper.Insert(new Author(null, "Charles", "Baudelaire"));
+                authorMapper.Insert(new Author(null, "Antoine", "de Saint-Exupéry"));
+                authorMapper.Save();
 
-            BookMapper bookMapper = BookMapper.GetInstance();
-            bookMapper.Fetch();
-            bookMapper.Insert(new Book(null, "On the road", authorMapper.FindByLastName("Kerouac")[0],new Price(100,"CZK")));
-            bookMapper.Insert(new Book(null, "Flowers of Evil", authorMapper.FindByLastName("Baudelaire")[0], new Price(200, "CZK")));
-            bookMapper.Insert(new Book(null, "The Little Prince", authorMapper.FindByLastName("de Saint-Exupéry")[0], new Price(300, "CZK")));
-            bookMapper.Save();
+                authorMapper.FindID(2)!.FirstName = "AAAAA";
+                authorMapper.Save();
 
-            Console.WriteLine("Authors saved to database: ");
-            foreach (var author in authorMapper.FindAll())
-                Console.WriteLine(author);
+                BookMapper bookMapper = BookMapper.GetInstance();
+                bookMapper.Fetch();
+                bookMapper.Insert(new Book(null, "On the road", authorMapper.FindByLastName("Kerouac")[0], new Price(100, "CZK")));
+                bookMapper.Insert(new Book(null, "Flowers of Evil", authorMapper.FindByLastName("Baudelaire")[0], new Price(200, "CZK")));
+                bookMapper.Insert(new Book(null, "The Little Prince", authorMapper.FindByLastName("de Saint-Exupéry")[0], new Price(300, "CZK")));
+                bookMapper.Save();
 
-            Console.WriteLine();
-            Console.WriteLine("Books saved to database: ");
-            foreach (var book in bookMapper.FindAll())
-                Console.WriteLine(book);
+                Console.WriteLine("Authors saved to database: ");
+                foreach (var author in authorMapper.FindAll())
+                    Console.WriteLine(author);
+
+                Console.WriteLine();
+                Console.WriteLine("Books saved to database: ");
+                foreach (var book in bookMapper.FindAll())
+                    Console.WriteLine(book);
+            }
+
+            {
+                ParentMapper parentMapper = ParentMapper.GetInstance();
+                parentMapper.Fetch();
+
+                var p1 = new Parent(null, "Tomáš", "Vláček");
+                var p2 = new Parent(null, "Eliška", "Vláčková");
+
+                parentMapper.Insert(p1);
+                parentMapper.Insert(p2);
+                parentMapper.Save();
+
+                ChildMapper childMapper = ChildMapper.GetInstance();
+                childMapper.Fetch();
+                childMapper.Insert(new Child(null, "Robin", "Vláček", 10));
+                childMapper.Insert(new Child(null, "Ujo", "Vláček", 8));
+                childMapper.Insert(new Child(null, "Amálie", "Vláčková", 5));
+                childMapper.Save();
+
+                parentMapper.FindByLastName("Vláček")[0].AddChildren(childMapper.FindByLastname("Vláček"))
+                                                        .AddChildren(childMapper.FindByLastname("Vláčková"));
+
+                parentMapper.FindByLastName("Vláčková")[0].AddChildren(childMapper.FindByLastname("Vláček"))
+                                                          .AddChildren(childMapper.FindByLastname("Vláčková"));
+                parentMapper.Save();
+
+                parentMapper.FindByLastName("Vláček")[0].Children[0].FirstName = "Robinette";
+                parentMapper.Save();
+
+                Console.WriteLine();
+                Console.WriteLine("Parents saved to database: ");
+                foreach (var parent in parentMapper.FindAll())
+                    Console.WriteLine(parent);
+
+            }
+
+
 
         }
         static void Main(string[] args)
         {
 
-            
+
             // DataAccessDemo();
             // ObjectRelationalBehaviorDemo();
             ObjectRelationalStructuresDemo();

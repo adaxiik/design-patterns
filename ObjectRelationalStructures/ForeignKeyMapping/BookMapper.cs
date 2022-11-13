@@ -84,8 +84,6 @@ namespace ObjectRelationalStructures.ForeignKeyMapping
             using (SqliteConnection connection = new SqliteConnection(Config.ConnectionString))
             {
                 connection.Open();
-                using (SqliteCommand command = new SqliteCommand("DELETE FROM Books", connection))
-                    command.ExecuteNonQuery();
                 foreach (var book in books)
                 {
                     if (book.Id is null)

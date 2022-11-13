@@ -7,16 +7,12 @@ namespace DataAccess.RowDataGateway
     public class PersonRowGateway
     {
         public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public decimal Balance { get; set; }
+        private Person person;
 
         public PersonRowGateway(int id, string lastName, string firstName, decimal balance)
         {
             Id = id;
-            FirstName = firstName;
-            LastName = lastName;
-            Balance = balance;
+            person = new Person(lastName, firstName, balance);
         }
 
         public void Update()
@@ -27,9 +23,9 @@ namespace DataAccess.RowDataGateway
                 using (SqliteCommand command = new SqliteCommand("UPDATE People SET FirstName = @firstName, lastName = @lastName, balance = @balance WHERE Id = @id", connection))
                 {
                     command.Parameters.AddWithValue("@id", Id);
-                    command.Parameters.AddWithValue("@firstName", FirstName);
-                    command.Parameters.AddWithValue("@lastName", LastName);
-                    command.Parameters.AddWithValue("@balance", Balance);
+                    command.Parameters.AddWithValue("@firstName", person.FirstName);
+                    command.Parameters.AddWithValue("@lastName", person.LastName);
+                    command.Parameters.AddWithValue("@balance", person.Balance);
                     command.ExecuteNonQuery();
                 }
             }
@@ -55,9 +51,9 @@ namespace DataAccess.RowDataGateway
                 connection.Open();
                 using (SqliteCommand command = new SqliteCommand("INSERT INTO People (firstName, lastName, balance) VALUES (@firstName, @lastName, @balance)", connection))
                 {
-                    command.Parameters.AddWithValue("@firstName", FirstName);
-                    command.Parameters.AddWithValue("@lastName", LastName);
-                    command.Parameters.AddWithValue("@balance", Balance);
+                    command.Parameters.AddWithValue("@firstName", person.FirstName);
+                    command.Parameters.AddWithValue("@lastName", person.LastName);
+                    command.Parameters.AddWithValue("@balance", person.Balance);
                     command.ExecuteNonQuery();
                 }
             }
@@ -65,7 +61,7 @@ namespace DataAccess.RowDataGateway
 
         public Person GetPerson()
         {
-            return new Person(LastName,FirstName, Balance);
+            return person;
         }
 
     }
